@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#10172b">
+<title>MateFácil | Desafío matemático</title>
+<style>
+:root{--bg:#10172b;--panel:#18233c;--panel2:#233252;--text:#f5f7ff;--muted:#b8c3dc;--accent:#8fb1ff;--green:#44d7a1;--red:#ff7b8a}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(145deg,#18264a,#0c1120 65%);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh;padding:16px;display:flex;align-items:center;justify-content:center}
+main{width:min(760px,100%)}.header{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}.logo{font-weight:900;letter-spacing:.04em}.logo span{color:var(--accent)}.chip{font-size:.85rem;background:#26385c;border:1px solid #3c527c;border-radius:999px;padding:8px 11px;color:#eaf0ff}
+.card{background:#18233cf5;border:1px solid #2c3d61;border-radius:24px;padding:clamp(20px,5vw,34px);box-shadow:0 20px 60px #0005}h1{font-size:clamp(2.1rem,7vw,3.3rem);line-height:1.03;margin:14px 0}h2{margin:0 0 10px;font-size:1.5rem}.muted{color:var(--muted);line-height:1.55}.tag{display:inline-block;background:#2a3b61;border-radius:8px;padding:6px 9px;color:#e2eaff;font-size:.78rem;font-weight:800;letter-spacing:.04em}
+.topics{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0}.topic{background:#202f4d;border:1px solid #35496e;border-radius:10px;padding:8px 10px;font-size:.9rem}
+input,select{width:100%;border:1px solid #43577e;background:#0f1930;color:white;padding:13px;border-radius:12px;font:inherit}
+label{display:block;font-weight:700;margin:14px 0 7px}.primary{background:var(--accent);color:#0c1630;width:100%;padding:14px;border:0;border-radius:13px;font:inherit;font-weight:900;margin-top:16px;cursor:pointer}.secondary{background:#283958;color:#f4f7ff;width:100%;padding:12px;border:1px solid #40557c;border-radius:12px;font:inherit;font-weight:800;margin-top:10px;cursor:pointer}
+.stats{display:flex;justify-content:space-between;gap:10px;color:var(--muted);font-size:.9rem}.barbg{height:8px;border-radius:99px;background:#2b3854;overflow:hidden;margin:15px 0 22px}.bar{height:100%;width:100%;background:linear-gradient(90deg,#8fb1ff,#44d7a1);transition:width .2s}
+.question{font-size:clamp(1.35rem,4.8vw,2rem);font-weight:850;line-height:1.35;margin:15px 0 20px}.answers{display:grid;grid-template-columns:1fr 1fr;gap:10px}.answer{padding:14px;text-align:left;min-height:60px;background:var(--panel2);border:1px solid #405477;color:var(--text);border-radius:13px;font:inherit;font-weight:700;cursor:pointer}.answer:disabled{cursor:default}.answer.good{background:#154438;border-color:var(--green)}.answer.bad{background:#482638;border-color:var(--red)}.feedback{min-height:44px;line-height:1.45;font-weight:700;margin-top:15px}.hidden{display:none!important}.result{text-align:center}.score{font-size:3.8rem;font-weight:950;margin:12px}.review{text-align:left;margin-top:25px}.review li{margin:12px 0;color:var(--muted);line-height:1.4}.review strong{color:var(--text)}.foot{font-size:.82rem;color:var(--muted);margin-top:16px}
+@media(max-width:500px){.answers{grid-template-columns:1fr}.header{align-items:flex-start}.card{border-radius:19px}}
+</style>
+</head>
+<body>
+<main>
+<div class="header"><div class="logo">✦ <span>MATE</span>FÁCIL</div><div class="chip">Secundaria · 15 s por pregunta</div></div>
+<section class="card" id="home">
+ <span class="tag">APRENDÉ JUGANDO</span>
+ <h1>Desafío<br>matemático</h1>
+ <p class="muted">Preguntas cortas, opciones fáciles y explicaciones para aprender mientras jugás. Elegí un tema o mezclalos todos.</p>
+ <div class="topics"><span class="topic">📈 Función lineal</span><span class="topic">🔢 Logaritmos</span><span class="topic">🧩 Polinomios</span><span class="topic">➕ Binomios</span><span class="topic">📐 Potencias y raíces</span><span class="topic">％ Porcentajes</span><span class="topic">🟰 Ecuaciones</span></div>
+ <label for="player">Nombre o apodo (opcional)</label><input id="player" maxlength="20" placeholder="Ej.: MatePro">
+ <label for="topicSelect">Elegí el tema</label><select id="topicSelect"><option value="all">Todos los temas mezclados</option><option value="lineal">Función lineal</option><option value="log">Logaritmación</option><option value="poly">Polinomios</option><option value="binom">Binomios</option><option value="extra">Otros temas fáciles</option></select>
+ <button class="primary" id="startBtn">¡Empezar a jugar! →</button>
+ <p class="foot">No hace falta registrarse ni instalar nada. El puntaje se calcula en este dispositivo; no hay ranking online.</p>
+</section>
+<section class="card hidden" id="game">
+ <div class="stats"><span id="progressText">Pregunta 1 de 10</span><span>⏱ <b id="time">15</b> s</span><span>⭐ <b id="points">0</b></span></div>
+ <div class="barbg"><div class="bar" id="bar"></div></div>
+ <span class="tag" id="category">FUNCIÓN LINEAL</span>
+ <div class="question" id="question"></div>
+ <div class="answers" id="answers"></div>
+ <div class="feedback" id="feedback" aria-live="polite"></div>
+</section>
+<section class="card result hidden" id="result">
+ <span class="tag">FIN DEL DESAFÍO</span><h1 id="resultTitle">¡Buen trabajo!</h1><p class="muted" id="resultText"></p>
+ <div class="score" id="score">0</div><p class="muted">puntos</p><div class="chip" id="correctCount"></div>
+ <div class="review"><h2>Repaso fácil</h2><ol id="review"></ol></div>
+ <button class="primary" id="againBtn">Volver al inicio</button>
+</section>
+</main>
+<script>
+const bank = [
+{t:"lineal",c:"FUNCIÓN LINEAL",q:"En y = 2x + 3, ¿cuál es la pendiente?",a:["2","3","−2","5"],k:0,e:"En y = mx + b, la pendiente es el número que acompaña a x. Acá es 2."},
+{t:"lineal",c:"FUNCIÓN LINEAL",q:"Si y = x + 4, ¿cuánto vale y cuando x = 2?",a:["2","4","6","8"],k:2,e:"Reemplazamos x por 2: y = 2 + 4 = 6."},
+{t:"lineal",c:"FUNCIÓN LINEAL",q:"En y = 3x − 1, ¿cuánto vale y si x = 1?",a:["1","2","3","4"],k:1,e:"Ponemos x = 1: y = 3·1 − 1 = 2."},
+{t:"lineal",c:"FUNCIÓN LINEAL",q:"¿Qué forma tiene una función lineal?",a:["y = mx + b","y = x²","y = 1/x","y = √x"],k:0,e:"La forma típica es y = mx + b, donde m es la pendiente y b el corte con el eje y."},
+{t:"log",c:"LOGARITMOS",q:"¿Cuánto vale log₁₀(100)?",a:["1","2","10","100"],k:1,e:"Preguntamos: ¿10 elevado a qué número da 100? Como 10² = 100, el logaritmo vale 2."},
+{t:"log",c:"LOGARITMOS",q:"¿Cuánto vale log₂(8)?",a:["2","3","4","8"],k:1,e:"2³ = 8, por eso log₂(8) = 3."},
+{t:"log",c:"LOGARITMOS",q:"Si log₃(9) = x, ¿cuánto vale x?",a:["1","2","3","9"],k:1,e:"3² = 9, entonces x = 2."},
+{t:"log",c:"LOGARITMOS",q:"¿Qué pregunta responde un logaritmo?",a:["Qué exponente necesito","Qué número es más grande","Cuánto mide un ángulo","Cuál es el perímetro"],k:0,e:"Un logaritmo busca el exponente al que hay que elevar la base para obtener un número."},
+{t:"poly",c:"POLINOMIOS",q:"¿Cuántos términos tiene 3x² + 2x − 5?",a:["1","2","3","5"],k:2,e:"Los términos están separados por + o −. Son 3x², 2x y −5: en total, 3."},
+{t:"poly",c:"POLINOMIOS",q:"Reducí: 2x + 5x",a:["7x","10x","7x²","3x"],k:0,e:"Sumamos los coeficientes: 2 + 5 = 7. Queda 7x."},
+{t:"poly",c:"POLINOMIOS",q:"¿Cuál es el grado de 4x³ + 2x − 7?",a:["1","2","3","4"],k:2,e:"El grado es el mayor exponente de x. El mayor es 3."},
+{t:"poly",c:"POLINOMIOS",q:"Reducí: 6x² − 2x²",a:["4x²","8x²","4x⁴","−4x²"],k:0,e:"Son términos semejantes: 6 − 2 = 4, por eso queda 4x²."},
+{t:"binom",c:"BINOMIOS",q:"¿Qué es un binomio?",a:["Una expresión de dos términos","Una expresión de tres términos","Una sola cifra","Una ecuación sin x"],k:0,e:"Bi significa dos: un binomio tiene dos términos, como x + 3."},
+{t:"binom",c:"BINOMIOS",q:"Desarrollá: (x + 2) + (x + 3)",a:["2x + 5","x + 5","2x + 6","x² + 5"],k:0,e:"Sumamos las x y los números: x + x = 2x y 2 + 3 = 5. Queda 2x + 5."},
+{t:"binom",c:"BINOMIOS",q:"¿Cuál es el resultado de (x + 2)(x + 1)?",a:["x² + 3x + 2","x² + 2","2x + 3","x² + 3"],k:0,e:"Multiplicamos cada término: x·x + x·1 + 2·x + 2·1 = x² + 3x + 2."},
+{t:"binom",c:"BINOMIOS",q:"¿Cuál es el resultado de (x + 3)²?",a:["x² + 9","x² + 6x + 9","x² + 3x + 9","2x + 6"],k:1,e:"(x + 3)² significa (x + 3)(x + 3), que da x² + 6x + 9."},
+{t:"extra",c:"POTENCIAS",q:"¿Cuánto es 2³?",a:["6","8","9","12"],k:1,e:"2³ = 2 × 2 × 2 = 8."},
+{t:"extra",c:"RAÍCES",q:"¿Cuánto es √49?",a:["6","7","8","9"],k:1,e:"7 × 7 = 49, así que √49 = 7."},
+{t:"extra",c:"PORCENTAJES",q:"¿Cuánto es el 10% de 80?",a:["4","8","10","18"],k:1,e:"El 10% es la décima parte: 80 ÷ 10 = 8."},
+{t:"extra",c:"ECUACIONES",q:"Resolvé: x + 7 = 12",a:["3","4","5","19"],k:2,e:"Restamos 7 de los dos lados: x = 12 − 7 = 5."},
+{t:"extra",c:"FRACCIONES",q:"¿Cuánto es 1/2 + 1/2?",a:["1/4","1/2","1","2"],k:2,e:"Una mitad más otra mitad forma un entero: 1."},
+{t:"extra",c:"GEOMETRÍA",q:"¿Cuánto suman los ángulos interiores de un triángulo?",a:["90°","180°","270°","360°"],k:1,e:"Los tres ángulos interiores de cualquier triángulo suman 180°."}
+];
+const $=id=>document.getElementById(id);let list=[],idx=0,score=0,correct=0,time=15,timer=null,locked=false,history=[],name="Jugador";
+function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function show(id){$(id).classList.remove("hidden")}function hide(id){$(id).classList.add("hidden")}
+function start(){name=$("player").value.trim()||"Jugador";let topic=$("topicSelect").value;let pool=bank.filter(q=>topic==="all"||q.t===topic);list=shuffle(pool).slice(0,Math.min(10,pool.length));idx=0;score=0;correct=0;history=[];hide("home");hide("result");show("game");render()}
+function render(){locked=false;time=15;$("time").textContent=time;$("points").textContent=score;$("bar").style.width="100%";$("feedback").textContent="";let q=list[idx];$("progressText").textContent=`Pregunta ${idx+1} de ${list.length}`;$("category").textContent=q.c;$("question").textContent=q.q;$("answers").innerHTML="";
+q.a.forEach((a,i)=>{let b=document.createElement("button");b.className="answer";b.textContent=String.fromCharCode(65+i)+") "+a;b.onclick=()=>choose(i,false);$("answers").appendChild(b)});
+clearInterval(timer);timer=setInterval(()=>{time--;$("time").textContent=time;$("bar").style.width=(time/15*100)+"%";if(time<=0)choose(-1,true)},1000)}
+function choose(n,timeout){if(locked)return;locked=true;clearInterval(timer);let q=list[idx],buttons=[...$("answers").children],ok=n===q.k;buttons.forEach(b=>b.disabled=true);if(ok){correct++;score+=100+time*3;buttons[n].classList.add("good");$("feedback").textContent="¡Bien! "+q.e}else{if(n>=0)buttons[n].classList.add("bad");buttons[q.k].classList.add("good");$("feedback").textContent=(timeout?"Se acabó el tiempo. ":"Casi. ")+q.e}history.push({q:q.q,chosen:n<0?"Sin respuesta":q.a[n],right:q.a[q.k],ok});$("points").textContent=score;setTimeout(()=>{idx++;idx<list.length?render():finish()},1900)}
+function finish(){hide("game");show("result");$("score").textContent=score;$("correctCount").textContent=`${correct} de ${list.length} correctas`;$("resultTitle").textContent=correct>=8?"¡Excelente, "+name+"!":correct>=5?"¡Buen intento, "+name+"!":"¡A practicar, "+name+"!";$("resultText").textContent=correct>=8?"¡La tenés clara! Seguí así.":correct>=5?"Vas bien: leé las explicaciones y probá otra vez.":"No pasa nada: practicando se aprende. Mirá el repaso y volvé a intentarlo.";$("review").innerHTML="";history.forEach(r=>{let li=document.createElement("li");let strong=document.createElement("strong");strong.textContent=r.q;li.appendChild(strong);li.appendChild(document.createElement("br"));li.append("Tu respuesta: "+r.chosen+" · Correcta: "+r.right);$("review").appendChild(li)})}
+$("startBtn").onclick=start;$("againBtn").onclick=()=>{hide("result");show("home")};
+</script>
+</body>
+</html>
